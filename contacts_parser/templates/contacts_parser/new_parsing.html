@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block new_parser %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Начать</button>
+    </form>
+
+{% endblock %}

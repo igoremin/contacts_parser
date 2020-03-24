@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block parser_list %}
+
+    <div class="row">
+        <div class="col-6">
+            <p>Начальное значение для парсинга</p>
+        </div>
+        <div class="col-6">
+            <p>{{ parsing.start_row }}</p>
+        </div>
+
+        <div class="col-6">
+            <p>Конечное значение для парсинга</p>
+        </div>
+        <div class="col-6">
+            <p>{{ parsing.end_row }}</p>
+        </div>
+
+        <div class="col-6">
+            <p>Файл с сайтами</p>
+        </div>
+        <div class="col-6">
+            <p>{{ parsing.main_file }}</p>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Начать</button>
+    </form>
+
+{% endblock %}

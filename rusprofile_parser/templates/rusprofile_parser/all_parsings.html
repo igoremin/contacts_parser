@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block parser_list %}
+
+    <h5>Список парсингов Rusprofile : </h5>
+
+    {% for parser in all_parsings %}
+        <div class="row">
+            <div class="col-6">
+                <p>
+                    <a href="{% url 'rusprofile_parser_details_url' name=parser.file_name %}">{{ parser.file_name }}</a>
+                </p>
+            </div>
+            <div class="col-6">
+                {% if parser.result_file %}
+                    <a href="{{ parser.result_file.url }}" download>Скачать файл</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

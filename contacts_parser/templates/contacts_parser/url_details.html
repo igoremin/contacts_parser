@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block parser_list %}
+    <div class="row">
+        <div class="col-3">
+            <p>Ссылка на сайт</p>
+        </div>
+        <div class="col-9">
+            <p>
+                <a href="{{ url.page_url }}" target="_blank">{{ url.page_url }}</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Заголовок</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.title }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Описание</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.description }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Список телефонов</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.phones }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Список email</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.emails }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>ИНН</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.inn }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>ОГРН</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.ogrn }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>КПП</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.kpp }}
+            </p>
+        </div>
+    </div>
+
+{% endblock %}

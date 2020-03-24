@@ -1,0 +1,11 @@
+*.pyc
+*~
+__pycache__
+v_server
+db.sqlite3
+/static
+/media
+/contacts_parser/migrations/
+/rusprofile_parser/migrations/
+.DS_Store 
+.idea

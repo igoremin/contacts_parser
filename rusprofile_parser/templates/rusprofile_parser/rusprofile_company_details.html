@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block parser_list %}
+    <div class="row">
+        <div class="col-3">
+            <p>Ссылка на сайт</p>
+        </div>
+        <div class="col-9">
+            <p>
+                <a href="{{ url.page_url }}" target="_blank">{{ url.page_url }}</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Заголовок</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.title }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Описание</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.description }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Список телефонов</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.phones }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Список email</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.emails }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>ИНН</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.inn }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>ОГРН</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.ogrn }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>КПП</p>
+        </div>
+        <div class="col-9">
+            <p>
+                {{ url.kpp }}
+            </p>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Название компании</p>
+        </div>
+        <div class="col-9">
+            {{ company.company_name }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Статус компании</p>
+        </div>
+        <div class="col-9">
+            {{ company.st }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>ИНН</p>
+        </div>
+        <div class="col-9">
+            {{ company.inn }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>ОГРН</p>
+        </div>
+        <div class="col-9">
+            {{ company.ogrn }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>КПП</p>
+        </div>
+        <div class="col-9">
+            {{ company.kpp }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Дата регистрации</p>
+        </div>
+        <div class="col-9">
+            {{ company.reg_date }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Адрес</p>
+        </div>
+        <div class="col-9">
+            {{ company.address }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Руководитель</p>
+        </div>
+        <div class="col-9">
+            {{ company.supervisor }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Капитал</p>
+        </div>
+        <div class="col-9">
+            {{ company.kap }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Количество сотрудников</p>
+        </div>
+        <div class="col-9">
+            {{ company.workers }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Налоговый режим</p>
+        </div>
+        <div class="col-9">
+            {{ company.nalog_rezhim }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Основной вид деятельности</p>
+        </div>
+        <div class="col-9">
+            {{ company.company_type }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Статус</p>
+        </div>
+        <div class="col-9">
+            {{ company.status }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Учредители</p>
+        </div>
+        <div class="col-9">
+            {{ company.all_founders }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Выручка</p>
+        </div>
+        <div class="col-9">
+            {{ company.revenue }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Прибыль</p>
+        </div>
+        <div class="col-9">
+            {{ company.profit }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <p>Налог</p>
+        </div>
+        <div class="col-9">
+            {{ company.nalog }}
+        </div>
+    </div>
+
+
+
+{% endblock %}
