@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
 
-@login_required
+# @login_required
 def main_page(request):
     if request.method == 'GET':
         all_parsers = ParserName.objects.all()
@@ -21,7 +21,7 @@ def main_page(request):
         return render(request, 'contacts_parser/parser_list.html', context)
 
 
-@login_required
+# @login_required
 def url_details(request, pk):
     if request.method == 'GET':
         url = PageData.objects.get(pk=pk)
@@ -31,7 +31,7 @@ def url_details(request, pk):
         return render(request, 'contacts_parser/url_details.html', context)
 
 
-@login_required
+# @login_required
 def parser_details(request, name):
     parser = get_object_or_404(ParserName, search_name=name)
 
@@ -103,7 +103,7 @@ def parser_details(request, name):
         return render(request, 'contacts_parser/parser_details.html', context)
 
 
-@login_required
+# @login_required
 def load_new_search_file(request):
     if request.method == 'GET':
         form = LoadNewSearchFile()
@@ -126,7 +126,7 @@ def load_new_search_file(request):
         return redirect(main_page)
 
 
-@login_required
+# @login_required
 def continue_parsing(request, name):
     if request.method == 'GET':
         con_parsing = get_object_or_404(ParserName, search_name=name)
@@ -161,7 +161,7 @@ def continue_parsing(request, name):
         return redirect(parser_details, name=con_parsing.search_name)
 
 
-@login_required
+# @login_required
 def parser_settings(request):
     if request.method == 'GET':
         settings = Settings.objects.all()[0]
@@ -188,7 +188,7 @@ def parser_settings(request):
             return redirect(main_page)
 
 
-@login_required
+# @login_required
 def new_parser(request):
     if request.method == 'GET':
         form = SearchInputForm()

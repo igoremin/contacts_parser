@@ -9,7 +9,7 @@ import threading
 import time
 
 
-@login_required
+# @login_required
 def done_parsings(request):
     if request.method == 'GET':
         all_parsings = RusprofileParser.objects.all()
@@ -20,7 +20,7 @@ def done_parsings(request):
         return render(request, 'rusprofile_parser/all_parsings.html', context)
 
 
-@login_required
+# @login_required
 def parsing_details(request, name):
     parser_info = get_object_or_404(RusprofileParser, file_name__iexact=name)
     if request.method == 'GET' and request.is_ajax():
@@ -74,7 +74,7 @@ def parsing_details(request, name):
         return redirect(parsing_details, name)
 
 
-@login_required
+# @login_required
 def company_details(request, pk):
     if request.method == 'GET':
         company = get_object_or_404(RusprofileParserData, pk=pk)
@@ -86,7 +86,7 @@ def company_details(request, pk):
         return render(request, 'rusprofile_parser/rusprofile_company_details.html', context)
 
 
-@login_required
+# @login_required
 def rusprofile_settings(request):
     try:
         settings = RusprofileSettings.objects.all()[0]
@@ -119,7 +119,7 @@ def rusprofile_settings(request):
             return redirect(done_parsings)
 
 
-@login_required
+# @login_required
 def new_parsing(request):
     if request.method == 'GET':
         all_done_parsings = ParserName.objects.all()
