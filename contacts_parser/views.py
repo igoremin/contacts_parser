@@ -164,7 +164,12 @@ def continue_parsing(request, name):
 # @login_required
 def parser_settings(request):
     if request.method == 'GET':
-        settings = Settings.objects.all()[0]
+        try:
+            settings = Settings.objects.all()[0]
+        except IndexError:
+            settings = Settings()
+            settings.save()
+
         context = {
             'form': ParserSettingsForm(initial={
                 'number_of_requests': settings.number_of_requests,
