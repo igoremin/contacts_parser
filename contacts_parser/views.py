@@ -115,9 +115,7 @@ def load_new_search_file(request):
     else:
         form = LoadNewSearchFile(request.POST, request.FILES)
         if form.is_valid():
-            print(form.clean())
             file = request.FILES['file']
-            print(file)
             new_file_model = FileWithUrls(
                 file=file
             )
@@ -144,7 +142,7 @@ def continue_parsing(request, name):
     else:
         con_parsing = get_object_or_404(ParserName, search_name=name)
 
-        with open(f"media/main_files/{con_parsing.main_file}", 'r', encoding='utf-8') as all_urls_file:
+        with open(con_parsing.main_file.file.path, 'r', encoding='utf-8') as all_urls_file:
             all_urls = []
             try:
                 for row in all_urls_file.readlines()[con_parsing.start_row:con_parsing.end_row]:
