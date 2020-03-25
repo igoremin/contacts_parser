@@ -19,7 +19,7 @@ from site_engine.settings import BASE_DIR
 
 
 def get_headers():
-    with open('user-agents/user_agents_for_chrome_pk.txt') as u_a:
+    with open(os.path.join(BASE_DIR, 'user-agents/user_agents_for_chrome_pk.txt')) as u_a:
         user_agents = [row.strip() for row in u_a.readlines()]
 
     headers = {

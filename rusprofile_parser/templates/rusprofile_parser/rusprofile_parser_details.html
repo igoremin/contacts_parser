@@ -14,9 +14,7 @@
                         dataType: 'json',
                         data: 'status=' + 'get_status',
                         error: function (result) {
-                            console.log(result);
                             console.log("Что-то пошло не так, попробуйте снова!");
-                            alert("Что-то пошло не так, попробуйте снова!");
                         },
                         success: function (result) {
                             let progress_bar = document.getElementById('progress_bar');
