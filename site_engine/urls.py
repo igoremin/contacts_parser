@@ -25,7 +25,7 @@ urlpatterns = [
     # path('accounts/', include('django.contrib.auth.urls')),
     path('rusprofile/', include('rusprofile_parser.urls')),
     path('', include('contacts_parser.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_DIR)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

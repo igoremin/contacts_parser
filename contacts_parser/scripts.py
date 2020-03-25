@@ -15,6 +15,7 @@ from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment, colors
 from openpyxl.utils.exceptions import IllegalCharacterError
 import concurrent.futures
 from .models import PageData, NoResponseUrls, DoneUrls, Settings
+from site_engine.settings import BASE_DIR
 
 
 def parsing(
@@ -425,10 +426,11 @@ def write_xlsx_file(search):
                 except IllegalCharacterError:
                     pass
 
-    if os.path.isdir(f'media/results_files/{search.search_name}') is False:
-        os.makedirs(f'media/results_files/{search.search_name}')
+    path = os.path.join(BASE_DIR, f'media/results_files/{search.search_name}')
+    if os.path.isdir(path) is False:
+        os.makedirs(path, mode=0o777)
 
-    wb.save(f'media/results_files/{search.search_name}/{file_name}')
+    wb.save(f'{path}/{file_name}')
 
     search.result_file = f'results_files/{search.search_name}/{file_name}'
     search.change_result_file()

@@ -15,6 +15,7 @@ from openpyxl import Workbook
 from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment, colors
 from openpyxl.utils.exceptions import IllegalCharacterError
 import concurrent.futures
+from site_engine.settings import BASE_DIR
 
 
 def get_headers():
@@ -467,10 +468,11 @@ def write_rusprofile_xlsx_file(search):
         except IllegalCharacterError:
             pass
 
-    if os.path.isdir(f'media/results_files/rusprofile/{search.file_name}') is False:
-        os.makedirs(f'media/results_files/rusprofile/{search.file_name}')
+    path = os.path.join(BASE_DIR, f'media/results_files/rusprofile/{search.file_name}')
+    if os.path.isdir(path) is False:
+        os.makedirs(path, mode=0o777)
 
-    wb.save(f'media/results_files/rusprofile/{search.file_name}/{file_name}')
+    wb.save(f'{path}/{file_name}')
 
     search.result_file = f'results_files/rusprofile/{search.file_name}/{file_name}'
     search.change_result_file()
