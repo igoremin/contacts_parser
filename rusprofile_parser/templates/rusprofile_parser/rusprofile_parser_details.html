@@ -93,21 +93,37 @@
 
     <div class="row">
         <div class="col-3">
-            <p>Ключевые слова</p>
+            <p>Использовать ключевые слова</p>
         </div>
         <div class="col-9">
-            <p>{{ parser_info.key_words }}</p>
+            {% if parser_info.use_key_words == False %}
+                <p>Нет</p>
+            {% else %}
+                <p>Да</p>
+            {% endif %}
+{#            {{ parser_info.use_key_words }}#}
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-3">
-            <p>Необходимое количество совпадений</p>
+    {% if parser_info.use_key_words == True %}
+        <div class="row">
+            <div class="col-3">
+                <p>Ключевые слова</p>
+            </div>
+            <div class="col-9">
+                <p>{{ parser_info.key_words }}</p>
+            </div>
         </div>
-        <div class="col-9">
-            <p>{{ parser_info.number_of_coincidences }}</p>
+
+        <div class="row">
+            <div class="col-3">
+                <p>Необходимое количество совпадений</p>
+            </div>
+            <div class="col-9">
+                <p>{{ parser_info.number_of_coincidences }}</p>
+            </div>
         </div>
-    </div>
+    {% endif %}
 
     <p>
         Количество результатов : {{ len_all_data }}

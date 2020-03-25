@@ -33,8 +33,19 @@ class NewRusprofileParserForm(forms.Form):
         )
     )
 
+    use_key_words = forms.ChoiceField(
+        label='Использовать ключевые слова',
+        choices=[('True', 'Да'), ('False', 'Нет')],
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
     key_words = forms.CharField(
         label='Ключевые слова',
+        required=False,
         widget=forms.Textarea(
             attrs={
                 'class': 'form-control',
@@ -45,6 +56,7 @@ class NewRusprofileParserForm(forms.Form):
 
     number_of_coincidences = forms.CharField(
         label='Количество совпадений по ключевым словам',
+        required=False,
         widget=forms.NumberInput(
             attrs={
                 'class': 'form-control',

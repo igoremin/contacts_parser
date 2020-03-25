@@ -359,23 +359,28 @@ def create_new_data(parser_name, page_data, data):
 
 
 def filter_and_search(data):
-    key_words = str(data[1].key_words).split(',')
-    search_count = 0
+    if data[1].use_key_words is True:
+        target = int(data[1].number_of_coincidences)
+        key_words = str(data[1].key_words).split(',')
+        search_count = 0
 
-    for keys in key_words:
-        key = keys.strip().split(' ')
-        check = True
-        for k in key:
+        for keys in key_words:
+            key = keys.strip().split(' ')
+            check = True
+            for k in key:
+                if check is True:
+                    if k.lower() in data[0].title.lower() or k in data[0].description.lower():
+                        check = True
+                    else:
+                        check = False
+                        break
             if check is True:
-                if k.lower() in data[0].title.lower() or k in data[0].description.lower():
-                    check = True
-                else:
-                    check = False
-                    break
-        if check is True:
-            search_count += 1
+                search_count += 1
+    else:
+        search_count = 0
+        target = 0
 
-    if search_count >= int(data[1].number_of_coincidences):
+    if search_count >= target:
         if len(data[0].inn) > 1 or len(data[0].ogrn) > 1 or len(data[0].kpp) > 1:
 
             if len(data[0].inn) > 1:

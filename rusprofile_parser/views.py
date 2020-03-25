@@ -135,12 +135,13 @@ def new_parsing(request):
             cleaned_data = form.clean()
             search_file = ParserName.objects.filter(search_name__iexact=cleaned_data['search_file'])
             if search_file:
-
                 new_parser = RusprofileParser(
                     search_file=search_file[0],
                     file_name=cleaned_data['file_name'],
                     key_words=cleaned_data['key_words'],
-                    number_of_coincidences=cleaned_data['number_of_coincidences'],
+                    use_key_words=cleaned_data['use_key_words'],
+                    number_of_coincidences=
+                    cleaned_data['number_of_coincidences'] if cleaned_data['number_of_coincidences'] is int else 0,
                     target=len(PageData.objects.filter(search_name__search_name__iexact=search_file[0].search_name))
                 )
                 new_parser.save()
