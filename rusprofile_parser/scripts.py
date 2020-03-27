@@ -359,7 +359,7 @@ def create_new_data(parser_name, page_data, data):
 
 
 def filter_and_search(data):
-    if data[1].use_key_words is True:
+    if data[1].use_key_words == 'True':
         target = int(data[1].number_of_coincidences)
         key_words = str(data[1].key_words).split(',')
         search_count = 0
