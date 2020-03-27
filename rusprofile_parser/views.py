@@ -141,7 +141,7 @@ def new_parsing(request):
                     key_words=cleaned_data['key_words'],
                     use_key_words=cleaned_data['use_key_words'],
                     number_of_coincidences=
-                    cleaned_data['number_of_coincidences'] if cleaned_data['number_of_coincidences'] is int else 0,
+                    cleaned_data['number_of_coincidences'] if len(cleaned_data['number_of_coincidences']) > 0 else 0,
                     target=len(PageData.objects.filter(search_name__search_name__iexact=search_file[0].search_name))
                 )
                 new_parser.save()
