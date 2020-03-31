@@ -24,7 +24,7 @@ def get_headers():
 
     headers = {
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'accept-encoding': 'gzip, deflate, br',
+        'accept-encoding': 'gzip, deflate',
         'accept-language': 'ru,ru-RU;q=0.9,kk-RU;q=0.8,kk;q=0.7,uz-RU;q=0.6,uz;q=0.5,en-RU;q=0.4,en-US;q=0.3,en;q=0.2',
         'cache-control': 'max-age=0',
         'connection': 'keep-alive',
@@ -36,23 +36,6 @@ def get_headers():
         'user-Agent': random.choice(user_agents),
     }
     return headers
-
-
-def get_proxy(settings):
-
-    proxy_file_path = settings.proxy_file.path
-
-    with open(proxy_file_path, 'r', encoding='utf-8') as proxy_file:
-        proxies = [row.strip() for row in proxy_file.readlines()]
-
-    proxy = str(random.choice(proxies)).split(':')
-    ip, port, login, password = proxy[0], proxy[1], proxy[2], proxy[3]
-
-    proxy_setting = {
-        "http": f"http://{login}:{password}@{ip}:{port}",
-        "https": f"https://{login}:{password}@{ip}:{port}"
-    }
-    return proxy_setting
 
 
 def check_proxy(proxy, headers):
@@ -74,42 +57,43 @@ def check_proxy(proxy, headers):
         print('Broken')
 
 
-def get_data(key):
+def get_data(key, proxy):
     status = False
     json_data = {}
-
     settings = RusprofileSettings.objects.all()[0]
 
     try:
 
-        proxy = get_proxy(settings)
         headers = get_headers()
-        # check_proxy(proxy, headers)
 
         request = requests.get(
             url=f'https://www.rusprofile.ru/ajax.php?&query={key}&action=search',
             stream=True,
             headers=headers,
-            proxies=proxy,
+            proxies=proxy.get_new_proxy(),
             timeout=settings.waiting_time
         )
 
         json_data = request.json()
         status = True
-    except HTTPError:
+    except HTTPError as http_err:
+        # print(f'HTTP error : {http_err}')
         pass
-    except Exception:
+    except Exception as err:
+        # print(f'Other err : {err}')
         pass
-    except TimeoutError:
-       pass
+    except TimeoutError as time_err:
+        # print(f'Timeout error : {time_err}')
+        pass
     except:
+        # print('Broken')
         pass
 
     if status is True:
         if json_data['message'] == 'Подтвердите, что вы не робот':
-            # print('РОБОТ!!!')
-            time.sleep(2)
-            get_data(key)
+            print('РОБОТ!!!')
+            time.sleep(6)
+            get_data(key, proxy)
         else:
             try:
                 if int(json_data['ul_count']) != 0:
@@ -126,7 +110,7 @@ def get_data(key):
                     for rez in json_data[s_type]:
                         link = rez['link']
 
-                        soup = get_soup(f'https://www.rusprofile.ru{link}', settings)
+                        soup = get_soup(f'https://www.rusprofile.ru{link}', settings, proxy)
                         company_data = get_data_from_soup(soup)
 
                         return company_data
@@ -138,18 +122,18 @@ def get_data(key):
         return False
 
 
-def get_soup(page_url, settings):
+def get_soup(page_url, settings, proxy):
     status = True
     count = 1
     while count < 5 or status is False:
         # print(f'URL {page_url} | Проход : {count}')
-        # time.sleep(random.uniform(3, 6))
+        time.sleep(random.uniform(2, 4))
         try:
 
             response = requests.get(
                 page_url,
                 headers=get_headers(),
-                proxies=get_proxy(settings),
+                proxies=proxy.get_new_proxy(),
                 stream=True,
                 timeout=settings.waiting_time
             )
@@ -358,6 +342,29 @@ def create_new_data(parser_name, page_data, data):
         pass
 
 
+def reform_data_from_rusprofile_bd(row):
+    row_data = {
+        'name': row.company_name,
+        'st': row.st,
+        'ogrn': row.ogrn,
+        'inn': row.inn,
+        'kpp': row.kpp,
+        'reg_date': row.reg_date,
+        'address': row.address,
+        'kap': row.kap,
+        'supervisor': row.supervisor,
+        'workers': row.workers,
+        'nalog_rezim': row.nalog_rezhim,
+        'company_type': row.company_type,
+        'status': row.status,
+        'rez_founders': row.all_founders,
+        'revenue': row.revenue,
+        'profit': row.profit,
+        'nalog': row.nalog
+    }
+    return row_data
+
+
 def filter_and_search(data):
     if data[1].use_key_words == 'True':
         target = int(data[1].number_of_coincidences)
@@ -385,17 +392,29 @@ def filter_and_search(data):
 
             if len(data[0].inn) > 1:
                 for i in str(data[0].inn).split(', '):
-                    result = get_data(i)
+                    i_search_in_bd = RusprofileParserData.objects.filter(inn__iexact=i)
+                    if i_search_in_bd:
+                        result = reform_data_from_rusprofile_bd(i_search_in_bd[0])
+                    else:
+                        result = get_data(i, data[2])
                     if result is not False:
                         create_new_data(data[1], data[0], result)
             elif len(data[0].ogrn) > 1:
                 for i in str(data[0].ogrn).split(', '):
-                    result = get_data(i)
+                    ogrn_search_in_bd = RusprofileParserData.objects.filter(ogrn__iexact=i)
+                    if ogrn_search_in_bd:
+                        result = reform_data_from_rusprofile_bd(ogrn_search_in_bd[0])
+                    else:
+                        result = get_data(i, data[2])
                     if result is not False:
                         create_new_data(data[1], data[0], result)
             elif len(data[0].kpp) > 1:
                 for i in str(data[0].kpp).split(', '):
-                    result = get_data(i)
+                    kpp_search_in_bd = RusprofileParserData.objects.filter(kpp__iexact=i)
+                    if kpp_search_in_bd:
+                        result = reform_data_from_rusprofile_bd(kpp_search_in_bd[0])
+                    else:
+                        result = get_data(i, data[2])
                     if result is not False:
                         create_new_data(data[1], data[0], result)
 
@@ -483,12 +502,41 @@ def write_rusprofile_xlsx_file(search):
     search.change_result_file()
 
 
+class Proxy:
+    def __init__(self):
+        print('-------INIT------')
+        self.proxy_file_path = RusprofileSettings.objects.all()[0].proxy_file.path
+        with open(self.proxy_file_path, 'r', encoding='utf-8') as proxy_file:
+            proxies = [row.strip() for row in proxy_file.readlines()]
+            self.proxies = sorted(proxies, key=lambda *args: random.random())
+
+    def get_new_proxy(self):
+        new_proxy = self.proxies.pop(0).split(':')
+
+        ip, port, login, password = new_proxy[0], new_proxy[1], new_proxy[2], new_proxy[3]
+
+        proxy_setting = {
+            "http": f"http://{login}:{password}@{ip}:{port}",
+            "https": f"https://{login}:{password}@{ip}:{port}"
+        }
+
+        if len(self.proxies) < 1:
+            with open(self.proxy_file_path, 'r', encoding='utf-8') as proxy_file:
+                proxies = [row.strip() for row in proxy_file.readlines()]
+                self.proxies = sorted(proxies, key=lambda *args: random.random())
+
+        return proxy_setting
+
+
 def main(parser):
-    settings = RusprofileSettings.objects.all()[0]
+
+    proxy = Proxy()
 
     all_data = PageData.objects.filter(search_name__search_name__iexact=parser.search_file)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=settings.pool_workers) as executor:
-        executor.map(filter_and_search, [[i, parser] for i in all_data])
+    with concurrent.futures.ThreadPoolExecutor(
+            max_workers=RusprofileSettings.objects.all()[0].pool_workers
+    ) as executor:
+        executor.map(filter_and_search, [[i, parser, proxy] for i in all_data])
 
     parser.change_status(True)
