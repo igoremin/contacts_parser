@@ -128,9 +128,6 @@ def load_new_search_file(request):
 def continue_parsing(request, name):
     if request.method == 'GET':
         con_parsing = get_object_or_404(ParserName, search_name=name)
-        con_parsing.set_done_urls(0)
-        con_parsing.change_status(False)
-        con_parsing.change_start_time()
 
         all_done_parsing = ParserName.objects.all()
         context = {
@@ -145,16 +142,19 @@ def continue_parsing(request, name):
         with open(con_parsing.main_file.file.path, 'r', encoding='utf-8') as all_urls_file:
             all_urls = []
             try:
-                for row in all_urls_file.readlines()[con_parsing.start_row:con_parsing.end_row]:
+                for row in all_urls_file.readlines()[con_parsing.start_row + con_parsing.done_urls:con_parsing.end_row]:
                     url = row.lower().strip().split('\t')[0]
                     all_urls.append(f"http://{url}")
             except IndexError:
                 print('Диапазон значений для поиска выбран не верно!')
-
         if len(all_urls) > 0:
+            con_parsing.change_status(False)
+            con_parsing.change_start_time()
 
             thread = threading.Thread(target=parsing, args=[all_urls, con_parsing])
             thread.start()
+        else:
+            con_parsing.change_status(True)
 
         return redirect(parser_details, name=con_parsing.search_name)
 

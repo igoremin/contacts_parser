@@ -16,16 +16,18 @@ from openpyxl.utils.exceptions import IllegalCharacterError
 import concurrent.futures
 from .models import PageData, NoResponseUrls, DoneUrls, Settings
 from site_engine.settings import BASE_DIR
+import gc
+
 
 
 def parsing(
         all_urls,
         new_search,
-        update_url=None,
         done_urls_from_page_data=None,
         done_urls_from_done_urls=None,
         no_response_urls=None
 ):
+
 
     class Parser:
         def __init__(self, url_from_file):
@@ -368,8 +370,23 @@ def parsing(
 
     settings = Settings.objects.all()[0]
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=settings.pool_workers) as executor:
-        executor.map(Parser, all_urls)
+    def chunk_data(data, chunk_size):
+        for i in range(0, len(data), chunk_size):
+            yield data[i:i + chunk_size]
+
+    if len(all_urls) > 100000:
+        for lines in chunk_data(all_urls, 100000):
+            print(lines)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=settings.pool_workers) as executor:
+                rez = executor.map(Parser, lines)
+                rez = None
+                executor.shutdown()
+            lines = None
+            gc.collect()
+    else:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=settings.pool_workers) as executor:
+            executor.map(Parser, all_urls)
+        gc.collect()
 
     new_search.change_status(True)
 
@@ -377,7 +394,6 @@ def parsing(
 
 
 def write_xlsx_file(search):
-    print('WRITE')
     csv.field_size_limit(100000000)
     done_main_urls = set()
 

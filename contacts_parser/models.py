@@ -7,7 +7,6 @@ import os
 
 
 def generate_path(instance, filename):
-    print('11111')
     today = datetime.datetime.today()
     date = today.strftime("%d-%m-%Y__%H-%M-%S")
     new_name = f"{instance.file.name.split('/')[-1]}"
@@ -65,7 +64,7 @@ class ParserName(models.Model):
         return self.search_name
 
     def save(self, *args, **kwargs):
-        if self.search_name:
+        if self.pk is None:
             today = datetime.datetime.today()
             date = today.strftime("%d-%m-%Y__%H:%M:%S")
             if ParserName.objects.filter(search_name__iexact=f'{self.search_name}__{date}'):
@@ -90,6 +89,7 @@ class ParserName(models.Model):
         super().save()
 
     def change_status(self, new_status):
+        print('CHANGE STATUS')
         self.status = new_status
         super().save()
 
