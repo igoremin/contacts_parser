@@ -41,6 +41,7 @@ def parsing(
             if main_page_data is not False:
                 self.main_page_soup, self.main_page_url = main_page_data[0], main_page_data[1]
                 self.parser_main_page()
+            all_class_list.append(self)
 
         def get_soup(self, site_url):
             if site_url in done_urls_from_page_data\
@@ -376,12 +377,14 @@ def parsing(
 
     if len(all_urls) > 100000:
         for lines in chunk_data(all_urls, 100000):
-            print(lines)
+            all_class_list = []
             with concurrent.futures.ThreadPoolExecutor(max_workers=settings.pool_workers) as executor:
                 rez = executor.map(Parser, lines)
                 rez = None
                 executor.shutdown()
+                del executor
             lines = None
+            del all_class_list
             gc.collect()
     else:
         with concurrent.futures.ThreadPoolExecutor(max_workers=settings.pool_workers) as executor:

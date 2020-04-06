@@ -13,4 +13,7 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'site_engine.settings')
 
-application = get_wsgi_application()
+try:
+    application = get_wsgi_application()
+except Exception as err:
+    print(f'wsgi error : {err}')
