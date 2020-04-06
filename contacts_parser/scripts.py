@@ -15,7 +15,7 @@ from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment, colors
 from openpyxl.utils.exceptions import IllegalCharacterError
 import concurrent.futures
 from .models import PageData, NoResponseUrls, DoneUrls, Settings
-from site_engine.settings import BASE_DIR
+from site_engine.settings import BASE_DIR, DEBUG
 import gc
 
 
@@ -53,7 +53,7 @@ def parsing(
                 count = 1
                 while count <= settings.number_of_requests or status is False:
                     try:
-                        if count > 1:
+                        if count > 1 and DEBUG:
                             print(f'Сайт {site_url} , проход {count}')
                         response = requests.get(
                             site_url,
