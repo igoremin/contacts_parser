@@ -19,7 +19,6 @@ from site_engine.settings import BASE_DIR, DEBUG
 import gc
 
 
-
 def parsing(
         all_urls,
         new_search,
@@ -27,7 +26,6 @@ def parsing(
         done_urls_from_done_urls=None,
         no_response_urls=None
 ):
-
 
     class Parser:
         def __init__(self, url_from_file):
