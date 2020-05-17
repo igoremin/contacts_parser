@@ -154,8 +154,11 @@ def continue_parsing(request, name):
             thread = threading.Thread(target=parsing, args=[all_urls, con_parsing])
             thread.start()
         else:
-            con_parsing.change_status(True)
-
+            if con_parsing.result_file:
+                con_parsing.change_status(True)
+            else:
+                write_xlsx_file(con_parsing)
+                con_parsing.change_status(True)
         return redirect(parser_details, name=con_parsing.search_name)
 
 

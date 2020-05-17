@@ -392,59 +392,72 @@ def parsing(
 
 
 def write_xlsx_file(search):
-    csv.field_size_limit(100000000)
-    done_main_urls = set()
+    k = 0
+    while k < 5:
+        try:
+            print('CREATE RESULT FILE')
+            csv.field_size_limit(100000000)
+            done_main_urls = set()
 
-    file_name = f'{datetime.datetime.today().strftime("%d-%m-%Y_%H-%M")}.xlsx'
+            file_name = f'{datetime.datetime.today().strftime("%d-%m-%Y_%H-%M")}.xlsx'
 
-    wb = Workbook()
+            wb = Workbook()
 
-    sheet = wb['Sheet']
-    wb.remove(sheet)
+            sheet = wb['Sheet']
+            wb.remove(sheet)
 
-    wb.create_sheet('Список сайтов')
-    sheet = wb['Список сайтов']
+            wb.create_sheet('Список сайтов')
+            sheet = wb['Список сайтов']
 
-    sheet.column_dimensions['A'].width = 20
-    sheet.column_dimensions['B'].width = 50
-    sheet.column_dimensions['C'].width = 50
-    sheet.column_dimensions['D'].width = 30
-    sheet.column_dimensions['E'].width = 30
-    sheet.column_dimensions['F'].width = 30
-    sheet.column_dimensions['G'].width = 100
-    sheet.column_dimensions['H'].width = 200
+            sheet.column_dimensions['A'].width = 20
+            sheet.column_dimensions['B'].width = 50
+            sheet.column_dimensions['C'].width = 50
+            sheet.column_dimensions['D'].width = 30
+            sheet.column_dimensions['E'].width = 30
+            sheet.column_dimensions['F'].width = 30
+            sheet.column_dimensions['G'].width = 100
+            sheet.column_dimensions['H'].width = 200
 
-    search_results = PageData.objects.filter(search_name=search)
-    r = 0
-    for result in search_results:
-        if r == 0:
-            header = NamedStyle(name="header")
-            header.font = Font(bold=True, color=colors.RED, size=20)
-            header.border = Border(bottom=Side(border_style="thin"))
-            header.alignment = Alignment(horizontal="center", vertical="center")
-            sheet.append(['Url', 'Email', 'Телефон', 'ИНН', 'ОГРН', 'КПП', 'Заголовок', 'Описание'])
-            header_row = sheet[1]
-            for cell in header_row:
-                cell.style = header
-            r += 1
-        else:
-            data = [result.page_url, result.emails, result.phones, result.inn, result.ogrn,
-                    result.kpp, result.title.strip(), result.description.strip()]
-
-            if result.page_url not in done_main_urls and len(result.page_url) > 4:
-
-                try:
-                    sheet.append(data)
-                    done_main_urls.add(result.page_url)
+            search_results = PageData.objects.filter(search_name=search)
+            r = 0
+            for result in search_results:
+                if r == 0:
+                    header = NamedStyle(name="header")
+                    header.font = Font(bold=True, color=colors.RED, size=20)
+                    header.border = Border(bottom=Side(border_style="thin"))
+                    header.alignment = Alignment(horizontal="center", vertical="center")
+                    sheet.append(['Url', 'Email', 'Телефон', 'ИНН', 'ОГРН', 'КПП', 'Заголовок', 'Описание'])
+                    header_row = sheet[1]
+                    for cell in header_row:
+                        cell.style = header
                     r += 1
-                except IllegalCharacterError:
-                    pass
+                else:
+                    data = [result.page_url, result.emails, result.phones, result.inn, result.ogrn,
+                            result.kpp, result.title.strip(), result.description.strip()]
 
-    path = os.path.join(BASE_DIR, f'media/results_files/{search.search_name}')
-    if os.path.isdir(path) is False:
-        os.makedirs(path, mode=0o777)
+                    if result.page_url not in done_main_urls and len(result.page_url) > 4:
 
-    wb.save(f'{path}/{file_name}')
+                        try:
+                            sheet.append(data)
+                            done_main_urls.add(result.page_url)
+                            r += 1
+                        except IllegalCharacterError:
+                            pass
 
-    search.result_file = f'results_files/{search.search_name}/{file_name}'
-    search.change_result_file()
+            path = os.path.join(BASE_DIR, f'media/results_files/{search.search_name}')
+            if os.path.isdir(path) is False:
+                os.makedirs(path, mode=0o777)
+
+            wb.save(f'{path}/{file_name}')
+
+            search.result_file = f'results_files/{search.search_name}/{file_name}'
+            search.change_result_file()
+
+            break
+        except Exception as err:
+            print(f'ERROR WITH WRITE RESULT FILE : {err}')
+        except:
+            print('ERROR WITH WRITE RESULTS')
+
+        time.sleep(60)
+        k += 1
