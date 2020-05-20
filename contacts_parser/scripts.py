@@ -14,7 +14,7 @@ from openpyxl import Workbook
 from openpyxl.styles import NamedStyle, Font, Border, Side, Alignment, colors
 from openpyxl.utils.exceptions import IllegalCharacterError
 import concurrent.futures
-from .models import PageData, NoResponseUrls, DoneUrls, Settings
+from .models import PageData, NoResponseUrls, DoneUrls, Settings, ParserName
 from site_engine.settings import BASE_DIR, DEBUG
 import gc
 
@@ -368,6 +368,8 @@ def parsing(
 
     settings = Settings.objects.all()[0]
 
+    new_search_id = new_search.pk
+
     def chunk_data(data, chunk_size):
         for i in range(0, len(data), chunk_size):
             yield data[i:i + chunk_size]
@@ -385,8 +387,12 @@ def parsing(
         with concurrent.futures.ThreadPoolExecutor(max_workers=settings.pool_workers) as executor:
             executor.map(Parser, all_urls)
         gc.collect()
-
-    new_search.change_status(True)
+    
+    try:
+        new_search.change_status(True)
+    except:
+        search = ParserName.objects.get(pk=new_search_id)
+        search.change_status(True)
 
     write_xlsx_file(new_search)
 
